@@ -6,8 +6,6 @@ import com.fasterxml.jackson.module.jsonSchema.customProperties.ValidationSchema
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.Test;
 
 import javax.validation.constraints.Min;
@@ -44,16 +42,18 @@ public class JsonSchemaTest {
     }
 
     class SomeValidatedObject {
+        /**
+         * by default only validation-api is supported. specifically the annotation are Size, Max, DecimalMax, Min, DecimalMin, Pattern, NotNull
+         * those can be overridden by ValidationSchemaFactoryWrapper(new ValidationConstraintResolver{})
+         * see https://github.com/FasterXML/jackson-module-jsonSchema/blob/master/src/main/java/com/fasterxml/jackson/module/jsonSchema/validation/AnnotationConstraintResolver.java
+         *
+         */
         @NotNull
         private String stringWithNotNull;
-        @Length(min = 5)
-        private String stringWithLength;
         @Size(min = 2)
         private String stringWithSizeMin;
         @Min(1)
         private String stringWithMin;
-        @NotEmpty
-        private String stringWithNotEmpty;
         @Min(1)
         private int intWithMin;
         @Size(min = 0, max = 150)
@@ -63,20 +63,12 @@ public class JsonSchemaTest {
             return stringWithNotNull;
         }
 
-        public String getStringWithLength() {
-            return stringWithLength;
-        }
-
         public String getStringWithSizeMin() {
             return stringWithSizeMin;
         }
 
         public String getStringWithMin() {
             return stringWithMin;
-        }
-
-        public String getStringWithNotEmpty() {
-            return stringWithNotEmpty;
         }
 
         public int getIntWithMin() {
