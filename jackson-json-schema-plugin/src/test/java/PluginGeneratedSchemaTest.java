@@ -13,12 +13,12 @@ public class PluginGeneratedSchemaTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    protected JsonNode getJsonNodeFromFile(String filePath) throws IOException {
+    private JsonNode getJsonNodeFromFile(String filePath) throws IOException {
 
         return getJsonNodeFromStream(new FileInputStream(filePath));
     }
 
-    protected JsonNode getJsonNodeFromStream(InputStream resourceAsStream) throws IOException {
+    private JsonNode getJsonNodeFromStream(InputStream resourceAsStream) throws IOException {
         return MAPPER.readTree(resourceAsStream);
     }
 
