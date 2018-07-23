@@ -1,39 +1,66 @@
 package net.niebes.validation;
 
 import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.module.jsonSchema.validation.AnnotationConstraintResolver;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
-public class HibernateValidationConstraintResolver extends AnnotationConstraintResolver {
-    public Integer getArrayMaxItems(BeanProperty prop) {
-        return super.getArrayMaxItems(prop);
+import java.util.Optional;
+import java.util.function.Function;
+
+/**
+ * supports hibernate Range, NotEmpty, NotBlank
+ */
+public class HibernateValidationConstraintResolver extends AbstractValidationResolver {
+
+    @Override
+    public Double getNumberMaximum(BeanProperty property) {
+        return firstOrNull(property,
+                fetchRangeMin()
+        );
     }
 
-    public Integer getArrayMinItems(BeanProperty prop) {
-        return super.getArrayMinItems(prop);
+    @Override
+    public Double getNumberMinimum(BeanProperty property) {
+        return firstOrNull(property,
+                fetchRangeMax()
+        );
     }
 
-    public Double getNumberMaximum(BeanProperty prop) {
-        return super.getNumberMaximum(prop);
+    @Override
+    public Integer getStringMaxLength(BeanProperty property) {
+        return firstOrNull(property,
+                fetchNotEmptyAsMinLength(),
+                fetchNotBlankAsMinLength()
+        );
     }
 
-    public Double getNumberMinimum(BeanProperty prop) {
-        return super.getNumberMinimum(prop);
+    @Override
+    public Integer getStringMinLength(BeanProperty property) {
+        return firstOrNull(property,
+                fetchNotEmptyAsMinLength()
+        );
     }
 
-    public Integer getStringMaxLength(BeanProperty prop) {
-        return super.getStringMaxLength(prop);
+    private Function<BeanProperty, Optional<Double>> fetchRangeMin() {
+        return (property) -> getAnnotation(property, Range.class)
+                .map(Range::min)
+                .map(Long::doubleValue);
     }
 
-    public Integer getStringMinLength(BeanProperty prop) {
-        return super.getStringMinLength(prop);
+    private Function<BeanProperty, Optional<Double>> fetchRangeMax() {
+        return (property) -> getAnnotation(property, Range.class)
+                .map(Range::max)
+                .map(Long::doubleValue);
     }
 
-    public String getStringPattern(BeanProperty prop) {
-        return super.getStringPattern(prop);
+    private Function<BeanProperty, Optional<Integer>> fetchNotEmptyAsMinLength() {
+        return (property) -> getAnnotation(property, NotEmpty.class)
+                .map(ignored -> 1);
     }
 
-    public Boolean getRequired(BeanProperty prop) {
-        return super.getRequired(prop);
+    private Function<BeanProperty, Optional<Integer>> fetchNotBlankAsMinLength() {
+        return (property) -> getAnnotation(property, NotBlank.class)
+                .map(ignored -> 1);
     }
-
 }
