@@ -12,46 +12,39 @@ public class BaseJsonSchemaValidatorTest {
                 .getResourceAsStream(name);
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(is1);
-        return node;
+        return mapper.readTree(is1);
     }
 
     protected JsonNode getJsonNodeFromStringContent(String content) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(content);
-        return node;
+        return mapper.readTree(content);
     }
 
     protected JsonNode getJsonNodeFromUrl(String url) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(new URL(url));
-        return node;
+        return mapper.readTree(new URL(url));
     }
 
-    protected JsonSchema getJsonSchemaFromClasspath(String name) throws Exception {
+    protected JsonSchema getJsonSchemaFromClasspath(String name) {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
         InputStream is = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(name);
-        JsonSchema schema = factory.getSchema(is);
-        return schema;
+        return factory.getSchema(is);
     }
 
 
-    protected JsonSchema getJsonSchemaFromStringContent(String schemaContent) throws Exception {
+    protected JsonSchema getJsonSchemaFromStringContent(String schemaContent) {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-        JsonSchema schema = factory.getSchema(schemaContent);
-        return schema;
+        return factory.getSchema(schemaContent);
     }
 
     protected JsonSchema getJsonSchemaFromUrl(String url) throws Exception {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-        JsonSchema schema = factory.getSchema(new URL(url));
-        return schema;
+        return factory.getSchema(new URL(url));
     }
 
-    protected JsonSchema getJsonSchemaFromJsonNode(JsonNode jsonNode) throws Exception {
+    protected JsonSchema getJsonSchemaFromJsonNode(JsonNode jsonNode) {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-        JsonSchema schema = factory.getSchema(jsonNode);
-        return schema;
+        return factory.getSchema(jsonNode);
     }
 }
