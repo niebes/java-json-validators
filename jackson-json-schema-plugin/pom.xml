@@ -18,6 +18,12 @@
             <groupId>net.niebes</groupId>
             <artifactId>domain</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.4.4</version> <!-- same as plugin-->
+        </dependency>
     </dependencies>
 
     <build>
