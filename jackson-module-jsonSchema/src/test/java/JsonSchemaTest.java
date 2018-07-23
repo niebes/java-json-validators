@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.fasterxml.jackson.module.jsonSchema.customProperties.ValidationSchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import net.niebes.validation.HibernateValidationConstraintResolver;
@@ -15,7 +16,8 @@ import org.junit.Test;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -44,8 +46,12 @@ public class JsonSchemaTest {
 
         assertThat(schemaFromGenerator.getType(), equalTo(JsonFormatTypes.OBJECT));
         ObjectSchema objectSchema = schemaFromGenerator.asObjectSchema();
-        IntegerSchema age = objectSchema.getProperties().get("intWithMin").asIntegerSchema();
-        assertThat(age.getMinimum(), is(1d));
+        Map<String, JsonSchema> properties = objectSchema.getProperties();
+        IntegerSchema intWithMin = properties.get("intWithMin").asIntegerSchema();
+        ArraySchema objWithSizeMinAndMax = properties.get("objWithSizeMinAndMax").asArraySchema();
+        assertThat(intWithMin.getMinimum(), is(1d));
+        assertThat(objWithSizeMinAndMax.getMinItems(), is(12));
+        assertThat(objWithSizeMinAndMax.getMaxItems(), is(150));
     }
 
 
@@ -65,7 +71,7 @@ public class JsonSchemaTest {
         /**
          * by default only validation-api is supported. specifically the annotation are Size, Max, DecimalMax, Min, DecimalMin, Pattern, NotNull
          * those can be overridden by ValidationSchemaFactoryWrapper(new ValidationConstraintResolver{})
-         * see https://github.com/FasterXML/jackson-module-jsonSchema/blob/master/src/main/java/com/fasterxml/jackson/module/jsonSchema/validation/AnnotationConstraintResolver.java
+         * @see com.fasterxml.jackson.module.jsonSchema.validation.AnnotationConstraintResolver
          */
         @NotNull
         private String stringWithNotNull;
@@ -75,10 +81,10 @@ public class JsonSchemaTest {
         private String stringWithMin;
         @Min(1)
         private int intWithMin;
-        @Size(min = 0, max = 150)
-        private Set<Object> objWithSizeMinAndMax;
+        @Size(min = 12, max = 150)
+        private List<Object> objWithSizeMinAndMax;
 
-        public Set<Object> getObjWithSizeMinAndMax() {
+        public List<Object> getObjWithSizeMinAndMax() {
             return objWithSizeMinAndMax;
         }
 
