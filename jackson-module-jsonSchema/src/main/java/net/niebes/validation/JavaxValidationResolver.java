@@ -19,59 +19,59 @@ import java.util.function.Function;
 public class JavaxValidationResolver extends AbstractValidationResolver {
 
     @Override
-    public Integer getArrayMaxItems(BeanProperty prop) {
-        return firstOrNull(prop,
+    public Integer getArrayMaxItems(BeanProperty property) {
+        return firstOrNull(property,
                 fetchSizeMax()
         );
     }
 
     @Override
-    public Integer getArrayMinItems(BeanProperty prop) {
-        return firstOrNull(prop,
+    public Integer getArrayMinItems(BeanProperty property) {
+        return firstOrNull(property,
                 fetchSizeMin()
         );
     }
 
     @Override
-    public Double getNumberMaximum(BeanProperty prop) {
-        return firstOrNull(prop,
+    public Double getNumberMaximum(BeanProperty property) {
+        return firstOrNull(property,
                 fetchMax(),
                 fetchDecimalMax()
         );
     }
 
     @Override
-    public Double getNumberMinimum(BeanProperty prop) {
-        return firstOrNull(prop,
+    public Double getNumberMinimum(BeanProperty property) {
+        return firstOrNull(property,
                 fetchMin(),
                 fetchDecimalMin()
         );
     }
 
     @Override
-    public Integer getStringMaxLength(BeanProperty prop) {
-        return firstOrNull(prop,
+    public Integer getStringMaxLength(BeanProperty property) {
+        return firstOrNull(property,
                 fetchSizeMax()
         );
     }
 
     @Override
-    public Integer getStringMinLength(BeanProperty prop) {
-        return firstOrNull(prop,
+    public Integer getStringMinLength(BeanProperty property) {
+        return firstOrNull(property,
                 fetchSizeMin()
         );
     }
 
     @Override
-    public String getStringPattern(BeanProperty prop) {
-        return firstOrNull(prop,
+    public String getStringPattern(BeanProperty property) {
+        return firstOrNull(property,
                 fetchPatternRegexp()
         );
     }
 
     @Override
-    public Boolean getRequired(BeanProperty prop) {
-        return firstOrNull(prop,
+    public Boolean getRequired(BeanProperty property) {
+        return firstOrNull(property,
                 hasAnnotation(NotNull.class)
         );
     }
@@ -84,35 +84,35 @@ public class JavaxValidationResolver extends AbstractValidationResolver {
     private Function<BeanProperty, Optional<Integer>> fetchSizeMax() {
         return (property) -> getAnnotation(property, Size.class)
                 .map(Size::max)
-                .filter(integer -> integer != Integer.MAX_VALUE);
+                .filter(max -> max != Integer.MAX_VALUE);
     }
 
     private Function<BeanProperty, Optional<Integer>> fetchSizeMin() {
         return (property) -> getAnnotation(property, Size.class)
                 .map(Size::min)
-                .filter(integer -> integer != 0);
+                .filter(min -> min != 0);
     }
 
     private Function<BeanProperty, Optional<Double>> fetchMin() {
-        return (prop) -> getAnnotation(prop, Min.class)
+        return (property) -> getAnnotation(property, Min.class)
                 .map(Min::value)
                 .map(Long::doubleValue);
     }
 
     private Function<BeanProperty, Optional<Double>> fetchDecimalMin() {
-        return (prop) -> getAnnotation(prop, DecimalMin.class)
-                .map(decMax -> new BigDecimal(decMax.value()).doubleValue());
+        return (property) -> getAnnotation(property, DecimalMin.class)
+                .map(decimalMin -> new BigDecimal(decimalMin.value()).doubleValue());
     }
 
     private Function<BeanProperty, Optional<Double>> fetchMax() {
-        return (prop) -> getAnnotation(prop, Max.class)
+        return (property) -> getAnnotation(property, Max.class)
                 .map(Max::value)
                 .map(Long::doubleValue);
     }
 
     private Function<BeanProperty, Optional<Double>> fetchDecimalMax() {
-        return (prop) -> getAnnotation(prop, DecimalMax.class)
-                .map(decMax -> new BigDecimal(decMax.value()).doubleValue());
+        return (property) -> getAnnotation(property, DecimalMax.class)
+                .map(decimalMax -> new BigDecimal(decimalMax.value()).doubleValue());
     }
 
 }

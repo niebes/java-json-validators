@@ -15,14 +15,14 @@ public class AbstractValidationResolver extends ValidationConstraintResolver {
     }
 
 
-    <A extends Annotation> Optional<A> getAnnotation(BeanProperty prop, Class<A> annotation) {
-        return Optional.ofNullable(prop.getAnnotation(annotation));
+    <A extends Annotation> Optional<A> getAnnotation(BeanProperty property, Class<A> annotation) {
+        return Optional.ofNullable(property.getAnnotation(annotation));
     }
 
     @SafeVarargs
-    final <Type> Type firstOrNull(BeanProperty prop, Function<BeanProperty, Optional<Type>>... functions) {
+    final <Type> Type firstOrNull(BeanProperty property, Function<BeanProperty, Optional<Type>>... functions) {
         return Arrays.stream(functions)
-                .map(func -> func.apply(prop))
+                .map(func -> func.apply(property))
                 .filter(Optional::isPresent)
                 .findFirst()
                 .map(Optional::get)
@@ -31,42 +31,42 @@ public class AbstractValidationResolver extends ValidationConstraintResolver {
 
 
     @Override
-    public Integer getArrayMaxItems(BeanProperty prop) {
+    public Integer getArrayMaxItems(BeanProperty property) {
         return null;
     }
 
     @Override
-    public Integer getArrayMinItems(BeanProperty prop) {
+    public Integer getArrayMinItems(BeanProperty property) {
         return null;
     }
 
     @Override
-    public Double getNumberMaximum(BeanProperty prop) {
+    public Double getNumberMaximum(BeanProperty property) {
         return null;
     }
 
     @Override
-    public Double getNumberMinimum(BeanProperty prop) {
+    public Double getNumberMinimum(BeanProperty property) {
         return null;
     }
 
     @Override
-    public Integer getStringMaxLength(BeanProperty prop) {
+    public Integer getStringMaxLength(BeanProperty property) {
         return null;
     }
 
     @Override
-    public Integer getStringMinLength(BeanProperty prop) {
+    public Integer getStringMinLength(BeanProperty property) {
         return null;
     }
 
     @Override
-    public String getStringPattern(BeanProperty prop) {
+    public String getStringPattern(BeanProperty property) {
         return null;
     }
 
     @Override
-    public Boolean getRequired(BeanProperty prop) {
+    public Boolean getRequired(BeanProperty property) {
         return null;
     }
 }

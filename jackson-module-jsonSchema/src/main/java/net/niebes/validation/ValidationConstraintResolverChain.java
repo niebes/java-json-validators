@@ -29,42 +29,42 @@ public class ValidationConstraintResolverChain extends ValidationConstraintResol
     }
 
     @Override
-    public Integer getArrayMaxItems(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getArrayMaxItems(prop));
+    public Integer getArrayMaxItems(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getArrayMaxItems(property));
     }
 
     @Override
-    public Integer getArrayMinItems(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getArrayMinItems(prop));
+    public Integer getArrayMinItems(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getArrayMinItems(property));
     }
 
     @Override
-    public Double getNumberMaximum(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getNumberMaximum(prop));
+    public Double getNumberMaximum(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getNumberMaximum(property));
     }
 
     @Override
-    public Double getNumberMinimum(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getNumberMinimum(prop));
+    public Double getNumberMinimum(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getNumberMinimum(property));
     }
 
     @Override
-    public Integer getStringMaxLength(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getStringMaxLength(prop));
+    public Integer getStringMaxLength(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getStringMaxLength(property));
     }
 
     @Override
-    public Integer getStringMinLength(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getStringMinLength(prop));
+    public Integer getStringMinLength(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getStringMinLength(property));
     }
 
     @Override
-    public String getStringPattern(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getStringPattern(prop));
+    public String getStringPattern(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getStringPattern(property));
     }
 
     @Override
-    public Boolean getRequired(BeanProperty prop) {
-        return firstOrNull(resolver -> resolver.getRequired(prop));
+    public Boolean getRequired(BeanProperty property) {
+        return firstOrNull(resolver -> resolver.getRequired(property));
     }
 }
