@@ -41,7 +41,7 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>org/jsonschema/Person</include>
+                                <include>org/jsonschema/Person</include> <!-- apparently doesn't work with multiple classes-->
                             </includes>
                         </configuration>
                     </execution>

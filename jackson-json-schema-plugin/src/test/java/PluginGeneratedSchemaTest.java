@@ -14,7 +14,6 @@ public class PluginGeneratedSchemaTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private JsonNode getJsonNodeFromFile(String filePath) throws IOException {
-
         return getJsonNodeFromStream(new FileInputStream(filePath));
     }
 

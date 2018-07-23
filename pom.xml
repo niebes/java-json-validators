@@ -13,10 +13,15 @@
         <module>networknt-json-schema-validator</module>
         <!-- https://github.com/java-json-tools/json-schema-validator -->
         <module>com-github-fge-json-schema-validator</module>
-        <!-- http://fasterxml.github.io/jackson-schema-maven-plugin/jackson-json-schema-plugin/usage.html -->
-        <module>jackson-json-schema-plugin</module>
-        <!-- https://github.com/FasterXML/jackson-module-jsonSchema -->
+        <!-- https://github.com/FasterXML/jackson-module-jsonSchema
+         JSON Schema (v3)
+         -->
         <module>jackson-module-jsonSchema</module>
+        <!--
+        http://fasterxml.github.io/jackson-schema-maven-plugin/jackson-json-schema-plugin/usage.html
+        uses jackson-module-jsonSchema under the hood
+        -->
+        <module>jackson-json-schema-plugin</module>
         <!-- https://github.com/java-json-tools/json-schema-validator -->
     </modules>
     <dependencyManagement>
