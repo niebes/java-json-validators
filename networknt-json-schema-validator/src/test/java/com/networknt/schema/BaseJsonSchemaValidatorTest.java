@@ -3,33 +3,33 @@ package com.networknt.schema;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
 public class BaseJsonSchemaValidatorTest {
-    protected JsonNode getJsonNodeFromClasspath(String name) throws Exception {
-        InputStream is1 = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(name);
 
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(is1);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    protected JsonNode getJsonNodeFromClasspath(String resourceUrl) throws IOException {
+        return MAPPER.readTree(getResourceAsStream(resourceUrl));
     }
 
-    protected JsonNode getJsonNodeFromStringContent(String content) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(content);
+    protected JsonNode getJsonNodeFromStringContent(String string) throws IOException {
+        return MAPPER.readTree(string);
     }
 
-    protected JsonNode getJsonNodeFromUrl(String url) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(new URL(url));
+    protected JsonNode getJsonNodeFromUrl(String url) throws IOException {
+        return MAPPER.readTree(new URL(url));
+    }
+
+    private InputStream getResourceAsStream(String name) {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
     }
 
     protected JsonSchema getJsonSchemaFromClasspath(String name) {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-        InputStream is = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(name);
-        return factory.getSchema(is);
+        return factory.getSchema(getResourceAsStream(name));
     }
 
 
