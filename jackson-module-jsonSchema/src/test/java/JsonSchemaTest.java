@@ -37,7 +37,7 @@ public class JsonSchemaTest {
             JSONCompareMode.LENIENT);
 
     @Test
-    public void annotationReachesSchema() throws JsonMappingException {
+    public void bothSchemaGeneratorProduceSameResult() throws JsonMappingException {
         ValidationSchemaFactoryWrapper visitor = new ValidationSchemaFactoryWrapper();
         JsonSchema schemaFromGenerator = getSchemaFromGenerator(SomeValidatedObject.class, visitor);
         JsonSchema schemaFromVisitor = getSchemaFromVisitor(SomeValidatedObject.class, visitor);
@@ -49,7 +49,7 @@ public class JsonSchemaTest {
     }
 
     @Test
-    public void chainedAnnotationResolverMapFields() throws JsonProcessingException {
+    public void customValidationAnnotationMapperGetsMapped() throws JsonProcessingException {
         ValidationSchemaFactoryWrapper visitor = new ValidationSchemaFactoryWrapper(ValidationConstraintResolverChain.of(
                 new JavaxValidationResolver(),
                 new HibernateValidationConstraintResolver())
@@ -65,7 +65,19 @@ public class JsonSchemaTest {
         assertThat(objWithSizeMinAndMax.getMinItems(), is(12));
         assertThat(objWithSizeMinAndMax.getMaxItems(), is(150));
         //assertThat(properties.get("stringBigIntMapWithSize").asObjectSchema().getAdditionalProperties(), is(150));
-        compareWithDocumentation(schemaFromGenerator);
+
+    }
+
+    @Test
+    public void compareGeneratedWithDocumentation() throws JsonProcessingException {
+        ValidationSchemaFactoryWrapper visitor = new ValidationSchemaFactoryWrapper(ValidationConstraintResolverChain.of(
+                new JavaxValidationResolver(),
+                new HibernateValidationConstraintResolver())
+        );
+
+        JsonSchema schema = getSchemaFromGenerator(SomeValidatedObject.class, visitor);
+
+        compareWithDocumentation(schema);
 
     }
 
@@ -75,7 +87,7 @@ public class JsonSchemaTest {
             String generatedSchema = getAsString(schemaFromGenerator);
             String documentedSchema = getFromNamespace(schemaFromGenerator.getId());
             JSONCompareResult jsonCompareResult = compareJSON(documentedSchema, generatedSchema);
-            if (jsonCompareResult.failed()){
+            if (jsonCompareResult.failed()) {
                 fail("comparison failed: " + jsonCompareResult);
             }
 
