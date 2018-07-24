@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
@@ -8,22 +9,33 @@ import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema;
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import net.niebes.random.pack.age.SomeValidatedObject;
 import net.niebes.validation.HibernateValidationConstraintResolver;
 import net.niebes.validation.JavaxValidationResolver;
 import net.niebes.validation.ValidationConstraintResolverChain;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.JSONCompareResult;
+import org.skyscreamer.jsonassert.comparator.DefaultComparator;
+import org.skyscreamer.jsonassert.comparator.JSONComparator;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class JsonSchemaTest {
+    private static final JSONComparator JSON_COMPARATOR = new DefaultComparator(
+            JSONCompareMode.LENIENT);
+
     @Test
     public void annotationReachesSchema() throws JsonMappingException {
         ValidationSchemaFactoryWrapper visitor = new ValidationSchemaFactoryWrapper();
@@ -37,7 +49,7 @@ public class JsonSchemaTest {
     }
 
     @Test
-    public void chainedAnnotationResolverMapFields() throws JsonMappingException {
+    public void chainedAnnotationResolverMapFields() throws JsonProcessingException {
         ValidationSchemaFactoryWrapper visitor = new ValidationSchemaFactoryWrapper(ValidationConstraintResolverChain.of(
                 new JavaxValidationResolver(),
                 new HibernateValidationConstraintResolver())
@@ -52,8 +64,48 @@ public class JsonSchemaTest {
         assertThat(intWithMin.getMinimum(), is(1d));
         assertThat(objWithSizeMinAndMax.getMinItems(), is(12));
         assertThat(objWithSizeMinAndMax.getMaxItems(), is(150));
+        //assertThat(properties.get("stringBigIntMapWithSize").asObjectSchema().getAdditionalProperties(), is(150));
+        compareWithDocumentation(schemaFromGenerator);
+
     }
 
+    private void compareWithDocumentation(JsonSchema schemaFromGenerator) {
+        try {
+
+            String generatedSchema = getAsString(schemaFromGenerator);
+            String documentedSchema = getFromNamespace(schemaFromGenerator.getId());
+            JSONCompareResult jsonCompareResult = compareJSON(documentedSchema, generatedSchema);
+            if (jsonCompareResult.failed()){
+                fail("comparison failed: " + jsonCompareResult);
+            }
+
+        } catch (IOException | JSONException e) {
+            fail("exception: " + e.getMessage());
+        }
+    }
+
+    private JSONCompareResult compareJSON(String documentedSchema, String generatedSchema) throws JSONException {
+        return JSON_COMPARATOR.compareJSON(new JSONObject(generatedSchema), new JSONObject(documentedSchema));
+    }
+
+    private String getFileContent(String pathname) throws IOException {
+        return Files.asCharSource(new File(pathname), Charsets.UTF_8).read();
+    }
+
+    private String getFromNamespace(String id) throws IOException {
+        return getFileContent(getFilePathFromNamespace(id));
+    }
+
+    private String getFilePathFromNamespace(String id) {
+        String prefix = "src/test/resources/";
+        String content = id.replace("urn:jsonschema:", "").replace(':', '/');
+        String suffix = ".json";
+        return prefix + content + suffix;
+    }
+
+    private String getAsString(JsonSchema schema) throws JsonProcessingException {
+        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(schema);
+    }
 
     private JsonSchema getSchemaFromGenerator(Class<?> type, SchemaFactoryWrapper schemaFactoryWrapper) throws JsonMappingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -67,43 +119,4 @@ public class JsonSchemaTest {
         return schemaFactoryWrapper.finalSchema();
     }
 
-    class SomeValidatedObject {
-        /**
-         * by default only validation-api is supported. specifically the annotation are Size, Max, DecimalMax, Min, DecimalMin, Pattern, NotNull
-         * those can be overridden by ValidationSchemaFactoryWrapper(new ValidationConstraintResolver{})
-         * @see com.fasterxml.jackson.module.jsonSchema.validation.AnnotationConstraintResolver
-         */
-        @NotNull
-        private String stringWithNotNull;
-        @Size(min = 2)
-        private String stringWithSizeMin;
-        @Min(1) //invalid
-        private String stringWithMin;
-        @Min(1)
-        private int intWithMin;
-        @Size(min = 12, max = 150)
-        private List<Object> objWithSizeMinAndMax;
-
-        public List<Object> getObjWithSizeMinAndMax() {
-            return objWithSizeMinAndMax;
-        }
-
-        public String getStringWithNotNull() {
-            return stringWithNotNull;
-        }
-
-        public String getStringWithSizeMin() {
-            return stringWithSizeMin;
-        }
-
-        public String getStringWithMin() {
-            return stringWithMin;
-        }
-
-        public int getIntWithMin() {
-            return intWithMin;
-        }
-
-
-    }
 }

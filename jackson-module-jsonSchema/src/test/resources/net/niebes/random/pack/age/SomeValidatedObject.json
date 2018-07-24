@@ -1,0 +1,32 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:net:niebes:random:pack:age:SomeValidatedObject",
+  "properties" : {
+    "stringWithNotNull" : {
+      "type" : "string",
+      "required" : true
+    },
+    "stringWithSizeMin" : {
+      "type" : "string",
+      "minLength" : 2
+    },
+    "string" : {
+      "type" : "string"
+    },
+    "stringBigIntMapWithSize" : {
+      "type" : "object",
+      "additionalProperties" : {
+        "type" : "integer"
+      }
+    },
+    "intWithMin" : {
+      "type" : "integer",
+      "minimum" : 1.0
+    },
+    "objWithSizeMinAndMax" : {
+      "type" : "array",
+      "maxItems" : 150,
+      "minItems" : 12
+    }
+  }
+}
