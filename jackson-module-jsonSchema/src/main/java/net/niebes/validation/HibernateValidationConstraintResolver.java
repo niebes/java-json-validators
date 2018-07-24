@@ -1,6 +1,7 @@
 package net.niebes.validation;
 
 import com.fasterxml.jackson.databind.BeanProperty;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
@@ -30,6 +31,7 @@ public class HibernateValidationConstraintResolver extends AbstractValidationRes
     @Override
     public Integer getStringMaxLength(BeanProperty property) {
         return firstOrNull(property,
+                fetchLengthMax(),
                 fetchNotEmptyAsMinLength(),
                 fetchNotBlankAsMinLength()
         );
@@ -38,7 +40,22 @@ public class HibernateValidationConstraintResolver extends AbstractValidationRes
     @Override
     public Integer getStringMinLength(BeanProperty property) {
         return firstOrNull(property,
+                fetchLengthMin(),
                 fetchNotEmptyAsMinLength()
+        );
+    }
+
+    @Override
+    public Integer getArrayMaxItems(BeanProperty property) {
+        return firstOrNull(property,
+                fetchLengthMin()
+        );
+    }
+
+    @Override
+    public Integer getArrayMinItems(BeanProperty property) {
+        return firstOrNull(property,
+                fetchLengthMax()
         );
     }
 
@@ -62,5 +79,15 @@ public class HibernateValidationConstraintResolver extends AbstractValidationRes
     private Function<BeanProperty, Optional<Integer>> fetchNotBlankAsMinLength() {
         return (property) -> getAnnotation(property, NotBlank.class)
                 .map(ignored -> 1);
+    }
+
+    private Function<BeanProperty, Optional<Integer>> fetchLengthMin() {
+        return (property) -> getAnnotation(property, Length.class)
+                .map(Length::min);
+    }
+
+    private Function<BeanProperty, Optional<Integer>> fetchLengthMax() {
+        return (property) -> getAnnotation(property, Length.class)
+                .map(Length::max);
     }
 }
