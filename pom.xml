@@ -19,7 +19,6 @@
         http://fasterxml.github.io/jackson-schema-maven-plugin/jackson-json-schema-plugin/usage.html
         uses jackson-module-jsonSchema under the hood
         -->
-        <module>jackson-json-schema-plugin</module>
     </modules>
     <dependencyManagement>
         <dependencies>
