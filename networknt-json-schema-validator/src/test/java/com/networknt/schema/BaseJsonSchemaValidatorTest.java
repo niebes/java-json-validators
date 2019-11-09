@@ -2,7 +2,6 @@ package com.networknt.schema;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -38,9 +37,9 @@ public class BaseJsonSchemaValidatorTest {
         return factory.getSchema(schemaContent);
     }
 
-    protected JsonSchema getJsonSchemaFromUrl(String url) throws Exception {
+    protected JsonSchema getJsonSchemaFromUrl(String url) {
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-        return factory.getSchema(new URL(url));
+        return factory.getSchema(url);
     }
 
     protected JsonSchema getJsonSchemaFromJsonNode(JsonNode jsonNode) {
